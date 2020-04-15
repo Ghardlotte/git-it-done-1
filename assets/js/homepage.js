@@ -10,9 +10,19 @@ var getUserRepos = function(user) {
     
     // make a request to the url 
     fetch(apiUrl).then(function(response) {
-        response.json().then(function(data) {
+
+        // response was successful 
+        if (response.ok) {
+            response.json().then(function(data) {
             displayRepos(data, user);
     });
+        } else {
+            alert("Error: " + response.statusText);
+        }
+    })
+    // network error
+    .catch(function(error) {
+        alert("Unable to connect to Github");
     });
 
 }
@@ -41,6 +51,12 @@ userFormEl.addEventListener("submit", formSubmitHandler);
 
 // displaying repos from API
 var displayRepos = function(repos, searchTerm) {
+    // check if api returned any repos & letting users know there is nothing to display
+    if (repos.length === 0) {
+        repoContainerEl.textContent = "No repositories found.";
+        return;
+    }
+
     // clear old content 
     repoContainerEl.textContent = "";
     repoSearchTerm.textContent = searchTerm;
